@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Titanic Survivor Predictor</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>🛳️ Titanic Survivor Predictor</h1>
+      <p class="subtitle">
+        Enter passenger details and click <strong>Predict</strong> to estimate survival.
+        This demo uses a small neural network behind an API.
+      </p>
+    </header>
+
+    <section class="card">
+      <form id="predict-form">
+        <div class="grid">
+          <label>
+            Class (Pclass)
+            <span class="hint" title="1 = 1st class (luxury), 2 = 2nd class, 3 = 3rd class">ⓘ</span>
+            <select id="Pclass" name="Pclass" required>
+              <option value="1">1 (First)</option>
+              <option value="2">2 (Second)</option>
+              <option value="3" selected>3 (Third)</option>
+            </select>
+          </label>
+
+          <fieldset>
+            <legend>Sex</legend>
+            <div class="row">
+              <label><input type="radio" name="Sex" value="female" checked /> Female</label>
+              <label><input type="radio" name="Sex" value="male" /> Male</label>
+            </div>
+          </fieldset>
+
+          <label>
+            Age: <span id="ageValue">30</span>
+            <input type="range" id="Age" name="Age" min="0" max="80" step="1" value="30" />
+          </label>
+
+          <label>
+            Fare (£): <span id="fareValue">32</span>
+            <input type="range" id="Fare" name="Fare" min="0" max="520" step="1" value="32" />
+          </label>
+
+          <label>
+            Siblings/Spouses (SibSp)
+            <input type="number" id="SibSp" name="SibSp" min="0" max="8" value="0" required />
+          </label>
+
+          <label>
+            Parents/Children (Parch)
+            <input type="number" id="Parch" name="Parch" min="0" max="6" value="0" required />
+          </label>
+
+          <label>
+            Embarked
+            <span class="hint" title="C=Cherbourg, Q=Queenstown, S=Southampton">ⓘ</span>
+            <select id="Embarked" name="Embarked">
+              <option value="S" selected>S (Southampton)</option>
+              <option value="C">C (Cherbourg)</option>
+              <option value="Q">Q (Queenstown)</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="randomBtn">🎲 Random Example</button>
+          <button type="reset" id="resetBtn">↺ Reset</button>
+          <button type="submit" class="primary">✨ Predict</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="resultCard" class="card hidden">
+      <h2>Result</h2>
+      <p id="resultText">—</p>
+      <div class="meter">
+        <div id="meterFill" class="meter-fill" style="width:0%"></div>
+      </div>
+      <pre id="rawJson" class="raw"></pre>
+    </section>
+
+    <footer>
+      <p>
+        Built with Flask + scikit‑learn.
+        <span class="muted">Tip: try First Class + Female + Age 25–40 + Fare 50–100 🙂</span>
+      </p>
+    </footer>
+  </main>
+
+  <script src="/static/main.js"></script>
+</body>
+</html>
