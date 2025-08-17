@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, render_template
 import joblib
 import numpy as np
 import os
+import os
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 import pandas as pd
 import tensorflow as tf
 
@@ -31,7 +33,7 @@ def predict():
 
     try:
         row = {
-            "Pclass": int(data.get("Pclass", 3)),
+            "Pclass": int(data.get("Pclass", 1)),
             "Sex": str(data.get("Sex", "female")).lower(),
             "Age": float(data.get("Age")) if data.get("Age") else np.nan,
             "SibSp": int(data.get("SibSp", 0)),

@@ -23,9 +23,9 @@
             Class (Pclass)
             <span class="hint" title="1 = 1st class (luxury), 2 = 2nd class, 3 = 3rd class">ⓘ</span>
             <select id="Pclass" name="Pclass" required>
-              <option value="1">1 (First)</option>
+              <option value="1" selected>1 (First)</option>
               <option value="2">2 (Second)</option>
-              <option value="3" selected>3 (Third)</option>
+              <option value="3">3 (Third)</option>
             </select>
           </label>
 
@@ -38,13 +38,13 @@
           </fieldset>
 
           <label>
-            Age: <span id="ageValue">30</span>
-            <input type="range" id="Age" name="Age" min="0" max="80" step="1" value="30" />
+            Age: <span id="ageValue">32</span>
+            <input type="range" id="Age" name="Age" min="0" max="80" step="1" value="32" />
           </label>
 
           <label>
-            Fare (£): <span id="fareValue">32</span>
-            <input type="range" id="Fare" name="Fare" min="0" max="520" step="1" value="32" />
+            Fare (£): <span id="fareValue">70</span>
+            <input type="range" id="Fare" name="Fare" min="0" max="520" step="1" value="70" />
           </label>
 
           <label>
@@ -87,8 +87,7 @@
 
     <footer>
       <p>
-        Built with Flask + scikit‑learn.
-        <span class="muted">Tip: try First Class + Female + Age 25–40 + Fare 50–100 🙂</span>
+        Built with Flask 🧪, using a TensorFlow 🧠 neural network.
       </p>
     </footer>
   </main>
