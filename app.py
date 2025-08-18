@@ -46,21 +46,8 @@ def predict():
 
     df = pd.DataFrame([row])
 
-    # Preprocess numerical and categorical features
-    num_imputer = preprocessor["num_imputer"]
-    scaler = preprocessor["scaler"]
-    cat_imputer = preprocessor["cat_imputer"]
-    encoder = preprocessor["encoder"]
-    numfts = preprocessor["num_features"]
-    catfts = preprocessor["cat_features"]
-
-    X_num = num_imputer.transform(df[numfts])
-    X_num_scaled = scaler.transform(X_num)
-
-    X_cat = cat_imputer.transform(df[catfts])
-    X_cat_encoded = encoder.transform(X_cat)
-
-    X_cleaned = np.hstack([X_num_scaled, X_cat_encoded])
+    # Preprocess 
+    X_cleaned = preprocessor.transform(df)
 
     # Predict probability
     proba = float(model.predict(X_cleaned, verbose=0)[0][0])

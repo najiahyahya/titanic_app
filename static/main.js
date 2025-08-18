@@ -1,7 +1,3 @@
-const age = document.getElementById("Age");
-const ageValue = document.getElementById("ageValue");
-const fare = document.getElementById("Fare");
-const fareValue = document.getElementById("fareValue");
 const form = document.getElementById("predict-form");
 const resultCard = document.getElementById("resultCard");
 const resultText = document.getElementById("resultText");
@@ -9,28 +5,53 @@ const rawJson = document.getElementById("rawJson");
 const meterFill = document.getElementById("meterFill");
 const randomBtn = document.getElementById("randomBtn");
 
-function syncRangeValue(input, label) {
-  const update = () => (label.textContent = input.value);
-  input.addEventListener("input", update);
-  update();
-}
-syncRangeValue(age, ageValue);
-syncRangeValue(fare, fareValue);
+// --- Hybrid input sync ---
+function syncHybrid(rangeId, numberId) {
+  const range = document.getElementById(rangeId);
+  const number = document.getElementById(numberId);
 
+  // Update number when range changes
+  range.addEventListener("input", () => {
+    number.value = range.value;
+  });
+
+  // Update range when number changes
+  number.addEventListener("input", () => {
+    range.value = number.value;
+  });
+}
+
+// Apply sync to Age + Fare
+syncHybrid("Age", "AgeNumber");
+syncHybrid("Fare", "FareNumber");
+
+// --- Random Example button ---
 randomBtn.addEventListener("click", () => {
   const rnd = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-  document.getElementById("Pclass").value = [1,2,3][rnd(0,2)];
+  document.getElementById("Pclass").value = [1, 2, 3][rnd(0, 2)];
+
   const sexes = document.querySelectorAll("input[name='Sex']");
-  sexes[rnd(0,1)].checked = true;
-  document.getElementById("Age").value = rnd(1, 79);
-  ageValue.textContent = document.getElementById("Age").value;
-  document.getElementById("Fare").value = rnd(0, 512);
-  fareValue.textContent = document.getElementById("Fare").value;
+  sexes[rnd(0, 1)].checked = true;
+
+  const rndFloat = (min, max, decimals = 2) => {
+    const factor = Math.pow(10, decimals);
+    return (Math.random() * (max - min) + min).toFixed(decimals);
+  };
+  
+  const age = rnd(1, 80);
+  document.getElementById("Age").value = age;
+  document.getElementById("AgeNumber").value = age;
+
+  const fare = rnd(0, 512.33);
+  document.getElementById("Fare").value = fare;
+  document.getElementById("FareNumber").value = fare;
+
   document.getElementById("SibSp").value = rnd(0, 5);
   document.getElementById("Parch").value = rnd(0, 4);
-  document.getElementById("Embarked").value = ["S","C","Q"][rnd(0,2)];
+  document.getElementById("Embarked").value = ["S", "C", "Q"][rnd(0, 2)];
 });
 
+// --- Form Submit (Predict) ---
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const data = new FormData(form);

@@ -1,6 +1,8 @@
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from tensorflow import keras
 
 import joblib
@@ -26,40 +28,42 @@ X = ttd.drop(columns="Survived")
 y = ttd["Survived"].values
 
 numfts = ["Age", "SibSp", "Parch", "Fare", "Pclass"]
-numfill = SimpleImputer(strategy="median")
-X_num = numfill.fit_transform(X[numfts])
-scaler = StandardScaler()
-X_num_scaled = scaler.fit_transform(X_num)
-
 catfts = ["Sex", "Embarked"]
-catfill = SimpleImputer(strategy="most_frequent")
-X_cat = catfill.fit_transform(X[catfts])
-encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)
-X_cat_encoded = encoder.fit_transform(X_cat)
 
-X_cleaned = np.hstack([X_num_scaled, X_cat_encoded])
+# ---Build preprocessing pipeline
+num_pipe = Pipeline([
+    ("imputer", SimpleImputer(strategy="median")),
+    ("scaler", StandardScaler())
+])
 
+cat_pipe = Pipeline([
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
+])
+
+preprocessor = ColumnTransformer([
+    ("num", num_pipe, numfts),
+    ("cat", cat_pipe, catfts)
+])
+
+X_cleaned = preprocessor.fit_transform(X)
 print(f"Shape of processed data: {X_cleaned.shape}")
 
 # ---Save Cleaned Data
 prepc_ttd = pd.DataFrame(
     X_cleaned,
-    columns=numfts + list(encoder.get_feature_names_out(catfts))
+    columns=(
+        numfts + 
+        list(preprocessor.named_transformers_["cat"]["encoder"].get_feature_names_out(catfts))
+    )
 )
 prepc_ttd["Survived"] = y  # add the target back
 prepc_ttd.to_csv("data/cleaned_titanic.csv", index=False)
 print("\n➖CLEANED DATA 'cleaned_titanic.csv' SAVED")
 
 # ---Save Preprocessor
-joblib.dump({
-    "num_imputer": numfill,
-    "scaler": scaler,
-    "cat_imputer": catfill,
-    "encoder": encoder,
-    "num_features": numfts,
-    "cat_features": catfts
-}, "model/titanic_preprocessor.joblib")
-print("\n➖PREPROCESSOR MODEL 'titanic_preprocessor.joblib' SAVED")
+joblib.dump(preprocessor, "model/titanic_preprocessor.joblib")
+print("\n➖PIPELINE 'titanic_preprocessor.joblib' SAVED")
 
 # ---Train-Test Split
 print("\n__________SPLIT TRAIN-TEST DATA__________")
@@ -72,7 +76,7 @@ print(f"Train size: {X_train.shape}, Test size: {X_test.shape}")
 print("\n___________BUILDING NEURAL NETWORK MODEL__________")
 model = keras.Sequential([
     keras.layers.Input(shape=(X_train.shape[1],)),
-    keras.layers.Dense(128, activation="relu", input_shape=(X_train.shape[1],)),
+    keras.layers.Dense(128, activation="relu"),
     keras.layers.Dropout(0.3),
     keras.layers.Dense(64, activation="relu"),
     keras.layers.Dense(1, activation="sigmoid")  # binary output
@@ -93,7 +97,8 @@ history = model.fit(
     epochs=50,
     batch_size=64,
     validation_data=(X_test, y_test),
-    verbose=1
+    verbose=1,
+    callbacks=[early_stop]
 )
 print("___________TRAINING COMPLETE__________")
 
@@ -123,6 +128,7 @@ plt.ylabel("Loss")
 plt.legend()
 plt.title("Loss over Epochs")
 
+plt.savefig("model/acc_loss_epochs.png")
 plt.show()
 
 # ---Save Model

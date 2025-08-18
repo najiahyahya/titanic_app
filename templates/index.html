@@ -38,23 +38,27 @@
           </fieldset>
 
           <label>
-            Age: <span id="ageValue">32</span>
-            <input type="range" id="Age" name="Age" min="0" max="80" step="1" value="32" />
+            Age: <div class="hybrid-input">
+            <input type="range" id="Age" name="Age" min="0" max="80" step="0.01" value="32" />
+            <input type="number" id="AgeNumber" name="AgeNumber" min="0" max="80" step="0.01" value="32" required />
+            </div>
           </label>
 
           <label>
-            Fare (£): <span id="fareValue">70</span>
-            <input type="range" id="Fare" name="Fare" min="0" max="520" step="1" value="70" />
+            Fare (£): <div class="hybrid-input">
+            <input type="range" id="Fare" name="Fare" min="0" max="512.33" step="0.01" value="512.33" />
+            <input type="number" id="FareNumber" name="FareNumber" min="0" max="512.33" step="0.01" value="512.33" required />
+            </div>
           </label>
 
           <label>
             Siblings/Spouses (SibSp)
-            <input type="number" id="SibSp" name="SibSp" min="0" max="8" value="0" required />
+            <input type="number" id="SibSp" name="SibSp" min="0" max="8" step="1" value="1" required />
           </label>
 
           <label>
             Parents/Children (Parch)
-            <input type="number" id="Parch" name="Parch" min="0" max="6" value="0" required />
+            <input type="number" id="Parch" name="Parch" min="0" max="6" step="1" value="1" required />
           </label>
 
           <label>
